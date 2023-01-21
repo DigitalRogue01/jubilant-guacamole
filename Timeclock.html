@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Metro UI -->
+    <link rel="stylesheet" href="https://cdn.korzh.com/metroui/v4/css/metro-all.min.css">
+  </head>
+  
+  <body>
+    <div class="container pt-5">
+    <form id="timesheet">
+        <div class="form-group">
+          <input type="text" data-role="input" data-prepend="Employee ID: " id="empid" pattern="\d{4}" title="Employee ID should be a 4 digit number" required>
+        </div>
+        <div class="form-group">
+          <input type="text" data-role="input" data-prepend="Location Code: " id="locode" pattern=pattern="[a-zA-Z0-9]{3,}" title="Location Code" required>
+        </div>
+        <div class="form-group">
+          <input type="text" data-role="input" data-prepend="Comment: " id="comment">
+        </div>
+        <div class="form-group">
+            <button id="clock-in" class="button success" type="submit" data-action="Clock In">Clock In</button>
+            <button id="clock-out"class="button success" type="submit" data-action="Clock Out">Clock Out</button>
+        </div>
+    </form>
+    </div>
+    <div id="message" class="d-none">
+      ERROR!!!
+    </div>  
+
+<!-- Metro UI -->
+    <script src="https://cdn.korzh.com/metroui/v4/js/metro.min.js"></script>
+    <script>
+      
+      const ClockInOutApp = {}
+          ClockInOutApp.onLoad = function(){
+            ClockInOutApp.form = document.getElementById("timesheet");
+            ClockInOutApp.empidInput = document.getElementById("empid");
+            ClockInOutApp.locodeInput = document.getElementById("locode");
+            ClockInOutApp.commentInput = document.getElementById("comment");
+            ClockInOutApp.clockInButton = document.getElementById("clock-in");
+
+  ClockInOutApp.onSubmit = function(e){
+        e.preventDefault();
+    }
+
+  ClockInOutApp.clockInOut = function(e){ 
+    const payload = {
+        empid: ClockInOutApp.empidInput.value,
+        locode: ClockInOutApp.locodeInput.value,
+        comment: ClockInOutApp.commentInput.value,
+        action: e.target.dataset.action
+    }
+
+    google.script.run.withSuccessHandler(() => {
+        ClockInOutApp.empidInput.value = ""
+        ClockInOutApp.locodeInput.value = ""
+        ClockInOutApp.commentInput.value = ""
+      }).withFailureHandler(() => {
+        ClockInOutApp.message.classList.remove("d-none")
+        setTimeout(() => {ClockInOutApp.message.classList.add("d-none")},3000)
+      }).clockInOut(payload)
+    }
+
+  document.addEventListener("DOMContentLoaded", ClockInOutApp.onLoad)
+
+
+</body>
+</html>
+</script>
